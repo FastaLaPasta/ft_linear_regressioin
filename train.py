@@ -10,6 +10,19 @@ def train_model(data):
     for i in range(epochs):
         m, b = gradient_descent(m, b, data, L)
 
+    return m, b
+
+
+def standardise_data(data):
+    km_mean, km_std = data['km'].mean(), data['km'].std()
+    price_mean, price_std = data['price'].mean(), data['price'].std()
+
+    data['km_standardized'] = (data['km'] - km_mean) / km_std
+    data['price_standardized'] = (data['price'] - price_mean) / price_std
+
+    m, b = train_model(data)
+    m = m * (price_std / km_std)
+    b = b * price_std + price_mean - m * km_mean
     create_csv(m, b)
     return m, b
 
@@ -40,3 +53,12 @@ def gradient_descent(m_now, b_now, points, L):
     b = b_now - b_gradient * L
 
     return m, b
+
+
+def main():
+    data = pd.read_csv('data.csv')
+    m, b = standardise_data(data)
+
+
+if __name__ == '__main__':
+    main()

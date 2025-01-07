@@ -1,8 +1,13 @@
 from math import sqrt
 import numpy as np
+import pandas as pd
+from utils import check_file
 
 
-#
+TETAS_FILE = 'tetas.csv'
+DATA_FILE = 'data.csv'
+
+
 def Error_mean_squared(points, m, b):
     total_error = 0
     for i in range(len(points)):
@@ -23,3 +28,20 @@ def coef_determination(data, m, b):
 
     r_squared = 1 - (ss_residual / ss_total)
     return r_squared
+
+
+def main():
+    data = pd.read_csv(DATA_FILE)
+    if (check_file(TETAS_FILE)):
+        function_parameters = pd.read_csv(TETAS_FILE)
+        m, b = function_parameters['m'][0], function_parameters['b'][0]
+    else:
+        m, b = 0, 0
+
+    print(f'average distance error : {Error_mean_squared(data, m, b):.2f}')
+    print(f'The precision of the algoritmh from 0 to 1 is : \
+{coef_determination(data, m, b):.2f}')
+
+
+if __name__ == '__main__':
+    main()
